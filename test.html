@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <h1>JavaScript Functional Test</h1>
+    
+    <div class="test-section">
+        <h2>Basic Functional Test</h2>
+        <button onclick="testBasicFunctions()">Test basic functions</button>
+        <button onclick="testTabSwitching()">Test Tab Page Switching</button>
+        <button onclick="testFileHandling()">Test File Processing</button>
+        <div id="test-results" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Modal box positioning test</h2>
+        <button onclick="testModalPositioning()">Test modal box positioning</button>
+        <button onclick="testModalWithScroll()">Test modal box positioning after scrolling</button>
+        <div id="modal-test-results" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>History Loading Prompt Test</h2>
+        <button onclick="testHistoryLoading()">Test History Loading Tips</button>
+        <button onclick="testHistoryLoadingLock()">Test the reentry lock mechanism</button>
+        <button onclick="testHistoryTabSwitch()">Test Tag Switch Loading Status</button>
+        <button onclick="testAntiFlicker()">Test the anti-flash mechanism</button>
+        <div id="history-loading-test-results" class="result"></div>
+    </div>
+
+    <script>
+        function log(message) {
+            const results = document.getElementById('test-results');
+            results.innerHTML += '<div>' + message + '</div>';
+            console.log(message);
+        }
+
+        function testBasicFunctions() {
+            log('Start test the basic function...');
+            
+            // Test whether the function exists
+            const functions = ['switchTab', 'generateFromText', 'generateFromImage', 'previewImage'];
+            functions.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    log('✓ ' + funcName + ' function exists');
+                } else {
+                    log('✗ ' + funcName + ' The function does not exist');
+                }
+            });
+            
+            log('Basic function test completed');
+        }
+
+        function testTabSwitching() {
+            log('Start test tab switching...');
+            
+            // Simulate tab page switching
+            try {
+                if (typeof switchTab === 'function') {
+                    log('✓ switchTab function can be called');
+                    // Test switching logic
+                    const tabs = document.querySelectorAll('.tab-button');
+                    if (tabs.length > 0) {
+                        log('✓ Find the tab page button: ' + tabs.length + ' ');
+                    } else {
+                        log('✗ Tag button not found');
+                    }
+                } else {
+                    log('✗ switchTab function does not exist');
+                }
+            } catch (error) {
+                log('✗ There was an error in the tab switching test: ' + error.message);
+            }
+            
+            log('Tag page switching test is completed');
+        }
+
+        function testFileHandling() {
+            log('Start test file processing...');
+            
+            // Test file processing related functions
+            const fileFunctions = ['previewImage', 'fileToBase64', 'handleImageUpload'];
+            fileFunctions.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    log('✓ ' + funcName + ' function exists');
+                } else {
+                    log('✗ ' + funcName + ' The function does not exist');
+                }
+            });
+            
+            log('File processing test completed');
+        }
+        
+        function testModalPositioning() {
+            log('test modal box positioning...');
+            
+            // Create a test modal box
+            const testModal = document.createElement('div');
+            testModal.id = 'test-modal';
+            testModal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 24px;
+            `;
+            testModal.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Modal box positioning test</h3>
+                    <p>Current location: top: ${testModal.style.top}, left: ${testModal.style.left}</p>
+                    <p>Position: ${testModal.style.position}</p>
+                    <button onclick="this.parentElement.parentElement.remove()" style="padding: 10px 20px; margin: 10px;">Close</button>
+                </div>
+            `;
+            
+            document.body.appendChild(testModal);
+            log('✅ Modal box positioning test is completed - check whether the modal box is in the center of the screen');
+        }
+        
+        function testModalWithScroll() {
+            log('Test modal box positioning after scrolling...');
+            
+            // Scroll the page first
+            window.scrollTo(0, 500);
+            log('Page has been scrolled to position 500px');
+            
+            // Test the modal box after the scrolling is completed
+            setTimeout(() => {
+       testModalPositioning();
+                log('✅ Modal box positioning test is completed after scrolling');
+            }, 100);
+        }
+        
+        function testHistoryLoading() {
+            log('test history loading prompt...');
+            
+            // Test display loading prompt
+            if (typeof showHistoryLoading === 'function') {
+                showHistoryLoading();
+                log('✅ Show history loading prompt');
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    if (typeof hideHistoryLoading === 'function') {
+                        hideHistoryLoading();
+                        log('✅ Hide history loading prompt');
+                    } else {
+                        log('❌ hideHistoryLoading function does not exist');
+                    }
+                }, 3000);
+            } else {
+                log('❌ showHistoryLoading function does not exist');
+            }
+        }
+        
+        function testHistoryLoadingLock() {
+            log('test history loads reenter lock...');
+            
+            if (typeof loadUserHistory === 'function') {
+                // The first call
+                log('First call loadUserHistory...');
+                loadUserHistory();
+                
+                // Call it for the second time immediately (should be blocked by the reentry lock)
+                setTimeout(() => {
+                    log('The second call to loadUserHistory (should be blocked by the reentry lock)..');
+                    loadUserHistory();
+                }, 100);
+                
+                log('✅ Reentry lock test is completed, check console log');
+            } else {
+                log('❌ The loadUserHistory function does not exist');
+            }
+        }
+        
+        function testHistoryTabSwitch() {
+            log('Test the loading status when switching to History tag...');
+            
+            if (typeof switchMainTab === 'function') {
+                // Switch to History tags
+                log('Switch to History tag...');
+                switchMainTab('history');
+                
+                // Check whether the loading prompt is displayed
+                setTimeout(() => {
+                    const loading = document.getElementById('history-loading');
+                    if (loading && loading.style.display !== 'none') {
+                        log('✅ History tag displays loading status');
+                    } else {
+                        log('ℹ️ History tag does not show load status (maybe there is no data being synchronized)');
+                    }
+                }, 100);
+                
+                log('✅ History tag switching test is completed');
+            } else {
+                log('❌ switchMainTab function does not exist');
+            }
+        }
+        
+        function testAntiFlicker() {
+            log('Test the anti-flashing mechanism...');
+            
+            if (typeof showHistoryLoading === 'function' && typeof hideHistoryLoading === 'function') {
+                // Show loading prompt
+                log('Show loading prompt...');
+                showHistoryLoading();
+                
+                // Try to hide immediately (should be delayed by the anti-flash mechanism)
+                setTimeout(() => {
+                    log('50ms try to hide (should be delayed by anti-flash)..');
+                    hideHistoryLoading();
+                    
+                    // Check if it is still displayed
+                    const loading = document.getElementById('history-loading');
+                    if (loading && loading.style.display !== 'none') {
+                        log('✅ The anti-flashing mechanism is working properly, and the loading prompt is still showing');
+                        
+                        // Check if it is hidden after 350ms
+                        setTimeout(() => {
+                            if (loading.style.display === 'none') {
+                                log('✅ Loading prompt is successfully hidden after anti-flash delay');
+                            } else {
+                                log('❌ Failed to hide load prompt after anti-flash delay');
+                            }
+                        }, 350);
+                    } else {
+                        log('ℹ️ Loading prompt is hidden immediately (maybe more than 300ms)');
+                    }
+                }, 50);
+                
+                log('✅ Anti-flash test starts up');
+            } else {
+                log('❌ showHistoryLoading or hideHistoryLoading function does not exist');
+            }
+        }
+
+        // Automatically run tests after the page loads
+        window.addEventListener('load', function() {
+            log('The page is loaded, start automatic testing...');
+            setTimeout(() => {
+                testBasicFunctions();
+                testTabSwitching();
+                testFileHandling();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
